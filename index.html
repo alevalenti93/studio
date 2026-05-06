@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="DentalBook" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Dental CaseBook Privato</title>
+  <style>
+    :root {
+      --bg: #f4f7f8;
+      --card: #ffffff;
+      --text: #102023;
+      --muted: #667579;
+      --line: #dce5e7;
+      --primary: #0f766e;
+      --primary-dark: #0b5f59;
+      --danger: #b42318;
+      --danger-bg: #fef3f2;
+      --soft: #e6f4f1;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --green-bg: #ecfdf3;
+      --shadow: 0 12px 32px rgba(16, 32, 35, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { border: 0; cursor: pointer; }
+
+    .app-shell {
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) 14px calc(86px + env(safe-area-inset-bottom));
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 14px 0 10px;
+      background: linear-gradient(to bottom, var(--bg) 78%, rgba(244, 247, 248, 0));
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-row { display: flex; align-items: center; gap: 10px; }
+    .title-block { flex: 1; min-width: 0; }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    h1 { margin: 0; font-size: 27px; line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { margin: 0 0 14px; font-size: 20px; letter-spacing: -0.02em; }
+    h3 { margin: 0 0 8px; font-size: 17px; }
+
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.4; }
+    .stack { display: grid; gap: 14px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card.compact { padding: 13px 14px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+    @media (min-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    label { display: grid; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 800; }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 13px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    textarea { min-height: 118px; resize: vertical; line-height: 1.45; }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,118,110,.12); }
+
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 850;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--primary-dark); }
+    .btn.secondary { background: var(--soft); color: var(--primary-dark); }
+    .btn.ghost { background: transparent; color: var(--primary-dark); border: 1px solid var(--line); }
+    .btn.danger { background: var(--danger-bg); color: var(--danger); }
+    .btn.small { min-height: 34px; padding: 7px 10px; font-size: 13px; }
+    .btn.full { width: 100%; }
+
+    .bottom-nav {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      z-index: 30;
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
+      background: rgba(255,255,255,.9);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-btn {
+      min-height: 48px;
+      border-radius: 18px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .nav-btn.active { background: var(--soft); color: var(--primary-dark); }
+
+    .list-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      text-align: left;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 8px 22px rgba(16,32,35,.06);
+    }
+
+    .list-item-title { font-size: 17px; font-weight: 850; letter-spacing: -.01em; margin-bottom: 4px; }
+    .meta { color: var(--muted); font-size: 13px; line-height: 1.35; }
+    .chevron { color: var(--muted); font-size: 24px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 850;
+      background: var(--soft);
+      color: var(--primary-dark);
+    }
+
+    .pill.amber { background: var(--amber-bg); color: #78350f; }
+    .pill.green { background: var(--green-bg); color: #067647; }
+    .pill.red { background: var(--danger-bg); color: var(--danger); }
+
+    .empty {
+      padding: 26px 18px;
+      text-align: center;
+      border: 1px dashed #b9c8cb;
+      background: rgba(255,255,255,.72);
+      border-radius: var(--radius);
+      color: var(--muted);
+    }
+
+    .photo-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    @media (min-width: 640px) { .photo-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+
+    .photo-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(16,32,35,.06);
+    }
+
+    .photo-card img { width: 100%; height: 150px; object-fit: cover; display: block; background: #e5eaeb; }
+    .photo-card-body { padding: 10px; display: grid; gap: 8px; }
+
+    .notice {
+      border-left: 4px solid var(--primary);
+      background: var(--soft);
+      padding: 12px 13px;
+      border-radius: 14px;
+      color: #164e48;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .warning { border-left-color: var(--amber); background: var(--amber-bg); color: #78350f; }
+    .danger-zone { border-color: #f2b8b5; background: #fffafa; }
+    .hidden-input { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(6,20,22,.88);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .modal img { max-width: 100%; max-height: 82dvh; border-radius: 16px; background: white; }
+    .modal-actions { position: fixed; top: calc(12px + env(safe-area-inset-top)); right: 14px; }
+
+    .toast {
+      position: fixed;
+      left: 14px;
+      right: 14px;
+      bottom: calc(76px + env(safe-area-inset-bottom));
+      z-index: 200;
+      background: #102023;
+      color: white;
+      padding: 12px 14px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: .25s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .lock-screen {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .lock-card { width: min(440px, 100%); }
+  </style>
+</head>
+<body>
+  <div id="lockRoot" class="lock-screen"></div>
+  <div id="mainRoot" class="app-shell" style="display:none;">
+    <header class="topbar" id="topbar"></header>
+    <main id="app" class="stack"></main>
+    <nav class="bottom-nav" id="bottomNav"></nav>
+  </div>
+
+  <input id="backupImport" class="hidden-input" type="file" accept="application/json,.dentalbackup" />
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const DB_NAME = 'dental-casebook-private-v2';
+    const DB_VERSION = 1;
+    const PIN_HASH_KEY = 'dentalCaseBook.pinHash.v1';
+    const PIN_SALT_KEY = 'dentalCaseBook.pinSalt.v1';
+    const AUTO_LOCK_MS = 5 * 60 * 1000;
+
+    const state = {
+      db: null,
+      route: { name: 'dashboard' },
+      patients: [],
+      sessions: [],
+      photos: [],
+      search: '',
+      activePhotoUrl: null,
+      unlocked: false,
+      lastActivityAt: Date.now()
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const app = $('#app');
+    const topbar = $('#topbar');
+    const bottomNav = $('#bottomNav');
+    const lockRoot = $('#lockRoot');
+    const mainRoot = $('#mainRoot');
+
+    function uid() {
+      return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function nowIso() { return new Date().toISOString(); }
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      const date = new Date(value);
+      return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function formatDateTime(value) {
+      if (!value) return '—';
+      const date = new Date(value);
+      return date.toLocaleString('it-IT', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    function dateInputValue(value) {
+      if (!value) return '';
+      const d = new Date(value);
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    function dateTimeInputValue(value) {
+      const d = value ? new Date(value) : new Date();
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function fromDateTimeInput(value) { return value ? new Date(value).toISOString() : nowIso(); }
+    function fromDateInput(value) { return value ? new Date(value + 'T12:00:00').toISOString() : ''; }
+
+    function displayPatientName(patient) {
+      const visibleName = `${patient?.lastName || ''} ${patient?.firstName || ''}`.trim();
+      return visibleName || patient?.patientCode || 'Paziente senza nome';
+    }
+
+    function patientSafeLabel(patient) {
+      const code = patient?.patientCode ? `[${patient.patientCode}] ` : '';
+      return code + displayPatientName(patient);
+    }
+
+    function toast(message) {
+      const el = $('#toast');
+      el.textContent = message;
+      el.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    function confirmDelete(message) { return window.confirm(message); }
+
+    function bytesToBase64(bytes) {
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary);
+    }
+
+    function base64ToBytes(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    async function sha256Base64(text) {
+      const data = new TextEncoder().encode(text);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return bytesToBase64(new Uint8Array(digest));
+    }
+
+    async function deriveKey(password, saltBytes, usages = ['encrypt', 'decrypt']) {
+      const baseKey = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: saltBytes, iterations: 250000, hash: 'SHA-256' },
+        baseKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        usages
+      );
+    }
+
+    async function hashPin(pin, saltBase64) {
+      return sha256Base64(`${saltBase64}:${pin}`);
+    }
+
+    function hasPin() { return Boolean(localStorage.getItem(PIN_HASH_KEY) && localStorage.getItem(PIN_SALT_KEY)); }
+
+    function renderLockScreen(mode = hasPin() ? 'unlock' : 'setup') {
+      mainRoot.style.display = 'none';
+      lockRoot.style.display = 'grid';
+      const isSetup = mode === 'setup';
+
+      lockRoot.innerHTML = `
+        <section class="card lock-card stack">
+          <div>
+            <div class="eyebrow">Dental CaseBook Privato</div>
+            <h1>${isSetup ? 'Crea PIN locale' : 'Sblocca archivio'}</h1>
+            <p class="subtitle">
+              ${isSetup
+                ? 'Il PIN protegge l’accesso su questo browser. Non viene inviato a nessun server.'
+                : 'Inserisci il PIN per accedere ai promemoria e alle schede paziente.'}
+            </p>
+          </div>
+
+          <form id="pinForm" class="stack">
+            <label>PIN ${isSetup ? 'nuovo' : ''}
+              <input name="pin" type="password" inputmode="numeric" autocomplete="current-password" minlength="4" placeholder="Minimo 4 cifre" required />
+            </label>
+            ${isSetup ? `
+              <label>Ripeti PIN
+                <input name="pin2" type="password" inputmode="numeric" minlength="4" placeholder="Ripeti il PIN" required />
+              </label>
+            ` : ''}
+            <button class="btn full" type="submit">${isSetup ? 'Crea e apri' : 'Sblocca'}</button>
+          </form>
+
+          <div class="notice warning">
+            Usa anche il blocco dell’iPhone con Face ID/codice. Se dimentichi il PIN locale, non posso recuperarlo.
+          </div>
+        </section>
+      `;
+
+      $('#pinForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const pin = String(data.get('pin') || '');
+        const pin2 = String(data.get('pin2') || '');
+
+        if (pin.length < 4) return toast('Il PIN deve avere almeno 4 cifre.');
+
+        if (isSetup) {
+          if (pin !== pin2) return toast('I due PIN non coincidono.');
+          const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+          const salt = bytesToBase64(saltBytes);
+          const hash = await hashPin(pin, salt);
+          localStorage.setItem(PIN_SALT_KEY, salt);
+          localStorage.setItem(PIN_HASH_KEY, hash);
+          await unlock();
+          return;
+        }
+
+        const salt = localStorage.getItem(PIN_SALT_KEY);
+        const expected = localStorage.getItem(PIN_HASH_KEY);
+        const actual = await hashPin(pin, salt);
+        if (actual !== expected) return toast('PIN errato.');
+        await unlock();
+      });
+    }
+
+    async function unlock() {
+      state.unlocked = true;
+      state.lastActivityAt = Date.now();
+      lockRoot.style.display = 'none';
+      mainRoot.style.display = 'block';
+      if (!state.db) state.db = await openDatabase();
+      await navigate(state.route || { name: 'dashboard' });
+    }
+
+    function lock() {
+      if (!state.unlocked) return;
+      closeModal();
+      state.unlocked = false;
+      renderLockScreen('unlock');
+    }
+
+    ['touchstart','mousedown','keydown','scroll'].forEach(eventName => {
+      window.addEventListener(eventName, () => { state.lastActivityAt = Date.now(); }, { passive: true });
+    });
+
+    setInterval(() => {
+      if (state.unlocked && Date.now() - state.lastActivityAt > AUTO_LOCK_MS) lock();
+    }, 15000);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && state.unlocked) lock();
+    });
+
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+
+          if (!db.objectStoreNames.contains('patients')) {
+            const store = db.createObjectStore('patients', { keyPath: 'id' });
+            store.createIndex('updatedAt', 'updatedAt');
+            store.createIndex('lastName', 'lastName');
+            store.createIndex('patientCode', 'patientCode');
+          }
+
+          if (!db.objectStoreNames.contains('sessions')) {
+            const store = db.createObjectStore('sessions', { keyPath: 'id' });
+            store.createIndex('patientId', 'patientId');
+            store.createIndex('date', 'date');
+            store.createIndex('nextDueDate', 'nextDueDate');
+            store.createIndex('status', 'status');
+          }
+
+          if (!db.objectStoreNames.contains('photos')) {
+            const store = db.createObjectStore('photos', { keyPath: 'id' });
+            store.createIndex('sessionId', 'sessionId');
+            store.createIndex('createdAt', 'createdAt');
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function tx(storeName, mode = 'readonly') { return state.db.transaction(storeName, mode).objectStore(storeName); }
+    function reqToPromise(request) { return new Promise((resolve, reject) => { request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); }
+    function getAll(storeName) { return reqToPromise(tx(storeName).getAll()); }
+    function getById(storeName, id) { return reqToPromise(tx(storeName).get(id)); }
+    function getAllByIndex(storeName, indexName, key) { return reqToPromise(tx(storeName).index(indexName).getAll(key)); }
+    function put(storeName, value) { return reqToPromise(tx(storeName, 'readwrite').put(value)); }
+    function remove(storeName, id) { return reqToPromise(tx(storeName, 'readwrite').delete(id)); }
+
+    async function refreshData() {
+      const [patients, sessions, photos] = await Promise.all([getAll('patients'), getAll('sessions'), getAll('photos')]);
+      state.patients = patients.sort((a,b) => patientSafeLabel(a).localeCompare(patientSafeLabel(b), 'it'));
+      state.sessions = sessions.sort((a,b) => new Date(b.date) - new Date(a.date));
+      state.photos = photos.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    async function navigate(route) {
+      if (!state.unlocked) return;
+      state.route = route;
+      await refreshData();
+      render();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function renderTopbar(title, subtitle = '', showBack = false) {
+      topbar.innerHTML = `
+        <div class="topbar-row">
+          ${showBack ? `<button class="btn ghost small" onclick="goBack()">← Indietro</button>` : ''}
+          <div class="title-block">
+            <div class="eyebrow">Archivio locale protetto</div>
+            <h1>${escapeHtml(title)}</h1>
+            ${subtitle ? `<p class="subtitle">${escapeHtml(subtitle)}</p>` : ''}
+          </div>
+          <button class="btn ghost small" onclick="lock()">Blocca</button>
+        </div>
+      `;
+    }
+
+    function renderNav() {
+      const active = state.route.name;
+      bottomNav.innerHTML = `
+        <button class="nav-btn ${active === 'dashboard' ? 'active' : ''}" onclick="navigate({ name: 'dashboard' })">✓<br>Da fare</button>
+        <button class="nav-btn ${active === 'patients' ? 'active' : ''}" onclick="navigate({ name: 'patients' })">👤<br>Pazienti</button>
+        <button class="nav-btn ${active === 'settings' ? 'active' : ''}" onclick="navigate({ name: 'settings' })">⚙︎<br>Sicurezza</button>
+      `;
+    }
+
+    function goBack() {
+      if (state.route.name === 'patient-form') return navigate({ name: state.route.patientId ? 'patient' : 'patients', patientId: state.route.patientId });
+      if (state.route.name === 'patient') return navigate({ name: 'patients' });
+      if (state.route.name === 'session-form') return navigate({ name: 'patient', patientId: state.route.patientId });
+      if (state.route.name === 'session') {
+        const session = state.sessions.find(s => s.id === state.route.sessionId);
+        return navigate({ name: 'patient', patientId: session?.patientId || state.route.patientId });
+      }
+      navigate({ name: 'dashboard' });
+    }
+
+    function render() {
+      renderNav();
+      const route = state.route;
+      if (route.name === 'dashboard') renderDashboard();
+      if (route.name === 'patients') renderPatients();
+      if (route.name === 'settings') renderSettings();
+      if (route.name === 'patient-form') renderPatientForm(route.patientId);
+      if (route.name === 'patient') renderPatient(route.patientId);
+      if (route.name === 'session-form') renderSessionForm(route.patientId, route.sessionId);
+      if (route.name === 'session') renderSession(route.sessionId);
+    }
+
+    function getOpenTasks() {
+      const today = new Date();
+      today.setHours(23,59,59,999);
+      return state.sessions
+        .filter(s => s.status !== 'done' && (s.plannedWork || s.nextDueDate))
+        .sort((a,b) => {
+          const ad = a.nextDueDate ? new Date(a.nextDueDate).getTime() : Infinity;
+          const bd = b.nextDueDate ? new Date(b.nextDueDate).getTime() : Infinity;
+          return ad - bd;
+        });
+    }
+
+    function duePill(session) {
+      if (session.status === 'done') return '<span class="pill green">Completato</span>';
+      if (!session.nextDueDate) return '<span class="pill amber">Senza data</span>';
+      const due = new Date(session.nextDueDate);
+      const today = new Date();
+      today.setHours(23,59,59,999);
+      if (due < new Date(new Date().setHours(0,0,0,0))) return '<span class="pill red">Scaduto</span>';
+      if (due <= today) return '<span class="pill amber">Oggi</span>';
+      return `<span class="pill">${formatDate(session.nextDueDate)}</span>`;
+    }
+
+    function renderDashboard() {
+      const tasks = getOpenTasks();
+      const totalPhotos = state.photos.length;
+      renderTopbar('Da fare', `${tasks.length} promemoria aperti · ${state.patients.length} pazienti`);
+
+      app.innerHTML = `
+        <section class="card stack">
+          <div class="grid-3">
+            <div><div class="eyebrow">Pazienti</div><h1>${state.patients.length}</h1></div>
+            <div><div class="eyebrow">Sedute</div><h1>${state.sessions.length}</h1></div>
+            <div><div class="eyebrow">Foto</div><h1>${totalPhotos}</h1></div>
+          </div>
+          <div class="button-row">
+            <button class="btn" onclick="navigate({ name: 'patient-form' })">+ Nuovo paziente</button>
+            <button class="btn secondary" onclick="navigate({ name: 'patients' })">Cerca paziente</button>
+          </div>
+        </section>
+
+        <section class="stack">
+          <h2>Promemoria clinici</h2>
+          ${tasks.length ? tasks.map(taskItem).join('') : `
+            <div class="empty"><strong>Nessun promemoria aperto.</strong><br>Quando inserisci “cosa devo fare” o una data promemoria, lo vedrai qui.</div>
+          `}
+        </section>
+      `;
+    }
+
+    function taskItem(session) {
+      const patient = state.patients.find(p => p.id === session.patientId);
+      const text = session.plannedWork || 'Promemoria senza testo';
+      return `
+        <button class="list-item" onclick="navigate({ name: 'session', sessionId: '${session.id}' })">
+          <div>
+            <div class="list-item-title">${escapeHtml(patientSafeLabel(patient))}</div>
+            <div class="meta">${escapeHtml(session.title || 'Seduta')} · ${formatDateTime(session.date)}</div>
+            <div class="meta" style="margin-top:8px;">${escapeHtml(text).slice(0, 180)}${text.length > 180 ? '…' : ''}</div>
+            <div style="margin-top:8px;">${duePill(session)}</div>
+          </div>
+          <div class="chevron">›</div>
+        </button>
+      `;
+    }
+
+    function renderPatients() {
+      renderTopbar('Pazienti', 'Archivio locale su questo iPhone');
+      const q = state.search.trim().toLowerCase();
+      const filtered = state.patients.filter(patient => {
+        if (!q) return true;
+        return [patient.patientCode, patient.firstName, patient.lastName, patient.phone, patient.email, patient.notes]
+          .some(value => String(value || '').toLowerCase().includes(q));
+      });
+
+      app.innerHTML = `
+        <section class="card stack">
+          <label>Cerca paziente
+            <input id="search" type="search" value="${escapeHtml(state.search)}" placeholder="Codice, nome, cognome, telefono..." />
+          </label>
+          <div class="button-row">
+            <button class="btn" onclick="navigate({ name: 'patient-form' })">+ Nuovo paziente</button>
+          </div>
+        </section>
+        <section class="stack">
+          ${filtered.length ? filtered.map(patientListItem).join('') : `<div class="empty"><strong>Nessun paziente trovato.</strong><br>Crea il primo paziente e poi aggiungi sedute, note e foto.</div>`}
+        </section>
+      `;
+
+      $('#search').addEventListener('input', event => {
+        state.search = event.target.value;
+        renderPatients();
+      });
+    }
+
+    function patientListItem(patient) {
+      const patientSessions = state.sessions.filter(s => s.patientId === patient.id);
+      const sessionIds = new Set(patientSessions.map(s => s.id));
+      const photoCount = state.photos.filter(p => sessionIds.has(p.sessionId)).length;
+      const openTasks = patientSessions.filter(s => s.status !== 'done' && (s.plannedWork || s.nextDueDate)).length;
+      return `
+        <button class="list-item" onclick="navigate({ name: 'patient', patientId: '${patient.id}' })">
+          <div>
+            <div class="list-item-title">${escapeHtml(patientSafeLabel(patient))}</div>
+            <div class="meta">${patientSessions.length} sedute · ${photoCount} foto · ${openTasks} promemoria</div>
+            ${patient.phone ? `<div class="meta">${escapeHtml(patient.phone)}</div>` : ''}
+          </div>
+          <div class="chevron">›</div>
+        </button>
+      `;
+    }
+
+    function renderPatientForm(patientId) {
+      const editing = Boolean(patientId);
+      const patient = editing ? state.patients.find(p => p.id === patientId) : null;
+      renderTopbar(editing ? 'Modifica paziente' : 'Nuovo paziente', '', true);
+
+      app.innerHTML = `
+        <form class="card stack" id="patientForm">
+          <div class="notice">Consiglio pratico: usa sempre anche un codice paziente, così puoi riconoscere la scheda anche senza mostrare nome/cognome completi.</div>
+          <label>Codice paziente / iniziali
+            <input name="patientCode" autocomplete="off" value="${escapeHtml(patient?.patientCode || '')}" placeholder="Es. PAZ-001, Rossi-M, RM1978" />
+          </label>
+
+          <div class="grid-2">
+            <label>Nome
+              <input name="firstName" autocomplete="given-name" value="${escapeHtml(patient?.firstName || '')}" />
+            </label>
+            <label>Cognome
+              <input name="lastName" autocomplete="family-name" value="${escapeHtml(patient?.lastName || '')}" />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>Data di nascita
+              <input name="birthDate" type="date" value="${escapeHtml(patient?.birthDate || '')}" />
+            </label>
+            <label>Telefono
+              <input name="phone" type="tel" autocomplete="tel" value="${escapeHtml(patient?.phone || '')}" />
+            </label>
+          </div>
+
+          <label>Email
+            <input name="email" type="email" autocomplete="email" value="${escapeHtml(patient?.email || '')}" />
+          </label>
+
+          <label>Note generali / anamnesi sintetica
+            <textarea name="notes" placeholder="Scrivi solo ciò che ti serve davvero come promemoria clinico.">${escapeHtml(patient?.notes || '')}</textarea>
+          </label>
+
+          <div class="button-row">
+            <button class="btn" type="submit">Salva paziente</button>
+            <button class="btn ghost" type="button" onclick="goBack()">Annulla</button>
+          </div>
+        </form>
+      `;
+
+      $('#patientForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const firstName = String(data.get('firstName') || '').trim();
+        const lastName = String(data.get('lastName') || '').trim();
+        const patientCode = String(data.get('patientCode') || '').trim();
+        if (!firstName && !lastName && !patientCode) return toast('Inserisci almeno codice, nome o cognome.');
+
+        const value = {
+          id: patient?.id || uid(),
+          patientCode,
+          firstName,
+          lastName,
+          birthDate: String(data.get('birthDate') || ''),
+          phone: String(data.get('phone') || '').trim(),
+          email: String(data.get('email') || '').trim(),
+          notes: String(data.get('notes') || '').trim(),
+          createdAt: patient?.createdAt || nowIso(),
+          updatedAt: nowIso()
+        };
+
+        await put('patients', value);
+        toast('Paziente salvato.');
+        navigate({ name: 'patient', patientId: value.id });
+      });
+    }
+
+    function renderPatient(patientId) {
+      const patient = state.patients.find(p => p.id === patientId);
+      if (!patient) return navigate({ name: 'patients' });
+      const patientSessions = state.sessions.filter(s => s.patientId === patientId);
+      const sessionIds = new Set(patientSessions.map(s => s.id));
+      const photoCount = state.photos.filter(p => sessionIds.has(p.sessionId)).length;
+      const openTasks = patientSessions.filter(s => s.status !== 'done' && (s.plannedWork || s.nextDueDate)).length;
+
+      renderTopbar(patientSafeLabel(patient), `${patientSessions.length} sedute · ${photoCount} foto · ${openTasks} promemoria`, true);
+      app.innerHTML = `
+        <section class="card stack">
+          <div class="button-row">
+            <button class="btn" onclick="navigate({ name: 'session-form', patientId: '${patient.id}' })">+ Nuova seduta</button>
+            <button class="btn secondary" onclick="navigate({ name: 'patient-form', patientId: '${patient.id}' })">Modifica paziente</button>
+          </div>
+          <div class="meta">
+            ${patient.birthDate ? `Nato/a il ${formatDate(patient.birthDate)}<br>` : ''}
+            ${patient.phone ? `Telefono: ${escapeHtml(patient.phone)}<br>` : ''}
+            ${patient.email ? `Email: ${escapeHtml(patient.email)}<br>` : ''}
+          </div>
+          ${patient.notes ? `<div class="notice">${escapeHtml(patient.notes).replaceAll('\n','<br>')}</div>` : ''}
+        </section>
+
+        <section class="stack">
+          <h2>Sedute</h2>
+          ${patientSessions.length ? patientSessions.map(sessionListItem).join('') : `<div class="empty"><strong>Nessuna seduta.</strong><br>Aggiungi una seduta per registrare cosa hai fatto e cosa devi fare.</div>`}
+        </section>
+
+        <section class="card danger-zone stack">
+          <h3>Zona eliminazione</h3>
+          <p class="subtitle">Eliminando il paziente elimini anche sedute e foto collegate.</p>
+          <button class="btn danger" onclick="deletePatient('${patient.id}')">Elimina paziente</button>
+        </section>
+      `;
+    }
+
+    function sessionListItem(session) {
+      const photos = state.photos.filter(p => p.sessionId === session.id);
+      const title = session.title || 'Seduta';
+      const summary = session.performedWork || session.notes || session.plannedWork || '';
+      return `
+        <button class="list-item" onclick="navigate({ name: 'session', sessionId: '${session.id}' })">
+          <div>
+            <div class="list-item-title">${escapeHtml(title)}</div>
+            <div class="meta">${formatDateTime(session.date)} · ${photos.length} foto</div>
+            ${summary ? `<div class="meta" style="margin-top:6px;">${escapeHtml(summary).slice(0,140)}${summary.length > 140 ? '…' : ''}</div>` : ''}
+            <div style="margin-top:8px;">${duePill(session)}</div>
+          </div>
+          <div class="chevron">›</div>
+        </button>
+      `;
+    }
+
+    async function deletePatient(patientId) {
+      if (!confirmDelete('Eliminare questo paziente con tutte le sedute e le foto?')) return;
+      const sessions = await getAllByIndex('sessions', 'patientId', patientId);
+      for (const session of sessions) {
+        const photos = await getAllByIndex('photos', 'sessionId', session.id);
+        for (const photo of photos) await remove('photos', photo.id);
+        await remove('sessions', session.id);
+      }
+      await remove('patients', patientId);
+      toast('Paziente eliminato.');
+      navigate({ name: 'patients' });
+    }
+
+    function renderSessionForm(patientId, sessionId) {
+      const editing = Boolean(sessionId);
+      const patient = state.patients.find(p => p.id === patientId);
+      const session = editing ? state.sessions.find(s => s.id === sessionId) : null;
+      if (!patient) return navigate({ name: 'patients' });
+      renderTopbar(editing ? 'Modifica seduta' : 'Nuova seduta', patientSafeLabel(patient), true);
+
+      app.innerHTML = `
+        <form class="card stack" id="sessionForm">
+          <div class="grid-2">
+            <label>Data e ora seduta
+              <input name="date" type="datetime-local" value="${dateTimeInputValue(session?.date)}" />
+            </label>
+            <label>Titolo
+              <input name="title" value="${escapeHtml(session?.title || 'Seduta')}" />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>Data promemoria / controllo
+              <input name="nextDueDate" type="date" value="${dateInputValue(session?.nextDueDate)}" />
+            </label>
+            <label>Stato
+              <select name="status">
+                <option value="open" ${session?.status !== 'done' ? 'selected' : ''}>Da fare / aperto</option>
+                <option value="done" ${session?.status === 'done' ? 'selected' : ''}>Completato</option>
+              </select>
+            </label>
+          </div>
+
+          <label>Cosa ho fatto in questa seduta
+            <textarea name="performedWork" placeholder="Es. igiene, impronte, preparazione, prova, consegna, controllo...">${escapeHtml(session?.performedWork || '')}</textarea>
+          </label>
+
+          <label>Cosa devo fare / promemoria prossimo appuntamento
+            <textarea name="plannedWork" placeholder="Es. rivedere tra 15 giorni, ritocco, controllo occlusione, richiamare paziente...">${escapeHtml(session?.plannedWork || '')}</textarea>
+          </label>
+
+          <label>Note aggiuntive
+            <textarea name="notes" placeholder="Sintomi riferiti, materiali usati, comunicazioni, indicazioni date...">${escapeHtml(session?.notes || '')}</textarea>
+          </label>
+
+          <div class="button-row">
+            <button class="btn" type="submit">Salva seduta</button>
+            <button class="btn ghost" type="button" onclick="goBack()">Annulla</button>
+          </div>
+        </form>
+      `;
+
+      $('#sessionForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const value = {
+          id: session?.id || uid(),
+          patientId,
+          date: fromDateTimeInput(String(data.get('date') || '')),
+          nextDueDate: fromDateInput(String(data.get('nextDueDate') || '')),
+          status: String(data.get('status') || 'open'),
+          title: String(data.get('title') || 'Seduta').trim() || 'Seduta',
+          performedWork: String(data.get('performedWork') || '').trim(),
+          plannedWork: String(data.get('plannedWork') || '').trim(),
+          notes: String(data.get('notes') || '').trim(),
+          createdAt: session?.createdAt || nowIso(),
+          updatedAt: nowIso()
+        };
+        await put('sessions', value);
+        toast('Seduta salvata.');
+        navigate({ name: 'session', sessionId: value.id });
+      });
+    }
+
+    function renderSession(sessionId) {
+      const session = state.sessions.find(s => s.id === sessionId);
+      if (!session) return navigate({ name: 'patients' });
+      const patient = state.patients.find(p => p.id === session.patientId);
+      const photos = state.photos.filter(p => p.sessionId === sessionId);
+      renderTopbar(session.title || 'Seduta', `${patientSafeLabel(patient)} · ${formatDateTime(session.date)}`, true);
+
+      app.innerHTML = `
+        <section class="card stack">
+          <div class="button-row">
+            <button class="btn secondary" onclick="navigate({ name: 'session-form', patientId: '${session.patientId}', sessionId: '${session.id}' })">Modifica seduta</button>
+            <button class="btn ghost" onclick="toggleSessionDone('${session.id}')">${session.status === 'done' ? 'Riapri promemoria' : 'Segna completato'}</button>
+            <button class="btn ghost" onclick="navigate({ name: 'patient', patientId: '${session.patientId}' })">Scheda paziente</button>
+          </div>
+          <div>${duePill(session)}</div>
+          <div class="stack">
+            <div><h3>Cosa ho fatto</h3><p class="subtitle">${session.performedWork ? escapeHtml(session.performedWork).replaceAll('\n','<br>') : '—'}</p></div>
+            <div><h3>Cosa devo fare</h3><p class="subtitle">${session.plannedWork ? escapeHtml(session.plannedWork).replaceAll('\n','<br>') : '—'}</p></div>
+            <div><h3>Note</h3><p class="subtitle">${session.notes ? escapeHtml(session.notes).replaceAll('\n','<br>') : '—'}</p></div>
+          </div>
+        </section>
+
+        <section class="card stack">
+          <h2>Foto della seduta</h2>
+          <div class="button-row">
+            <label class="btn" for="cameraInput">📷 Scatta foto</label>
+            <input id="cameraInput" class="hidden-input" type="file" accept="image/*" capture="environment" />
+            <label class="btn secondary" for="libraryInput">Importa foto</label>
+            <input id="libraryInput" class="hidden-input" type="file" accept="image/*" multiple />
+          </div>
+          <div class="notice">Le immagini vengono ridotte e salvate localmente nell’archivio del browser.</div>
+        </section>
+
+        <section class="stack">
+          ${photos.length ? `<div class="photo-grid">${photos.map(photoCard).join('')}</div>` : `<div class="empty"><strong>Nessuna foto collegata.</strong><br>Scatta o importa immagini per questa seduta.</div>`}
+        </section>
+
+        <section class="card danger-zone stack">
+          <h3>Zona eliminazione</h3>
+          <p class="subtitle">Eliminando la seduta elimini anche le foto collegate.</p>
+          <button class="btn danger" onclick="deleteSession('${session.id}', '${session.patientId}')">Elimina seduta</button>
+        </section>
+      `;
+
+      $('#cameraInput').addEventListener('change', event => handlePhotoFiles(event.target.files, session.id));
+      $('#libraryInput').addEventListener('change', event => handlePhotoFiles(event.target.files, session.id));
+    }
+
+    async function toggleSessionDone(sessionId) {
+      const session = await getById('sessions', sessionId);
+      if (!session) return;
+      session.status = session.status === 'done' ? 'open' : 'done';
+      session.updatedAt = nowIso();
+      await put('sessions', session);
+      toast(session.status === 'done' ? 'Promemoria completato.' : 'Promemoria riaperto.');
+      navigate({ name: 'session', sessionId });
+    }
+
+    function photoCard(photo) {
+      const url = URL.createObjectURL(photo.blob);
+      setTimeout(() => URL.revokeObjectURL(url), 120000);
+      return `
+        <article class="photo-card">
+          <img src="${url}" alt="Foto clinica" onclick="showPhoto('${photo.id}')" />
+          <div class="photo-card-body">
+            <input value="${escapeHtml(photo.caption || '')}" placeholder="Didascalia" onchange="updatePhotoCaption('${photo.id}', this.value)" />
+            <div class="button-row">
+              <button class="btn ghost small" onclick="showPhoto('${photo.id}')">Apri</button>
+              <button class="btn danger small" onclick="deletePhoto('${photo.id}')">Elimina</button>
+            </div>
+            <div class="meta">${formatDate(photo.createdAt)}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    async function handlePhotoFiles(fileList, sessionId) {
+      const files = Array.from(fileList || []);
+      if (!files.length) return;
+      toast('Importazione foto in corso...');
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        const blob = await compressImage(file);
+        await put('photos', {
+          id: uid(),
+          sessionId,
+          blob,
+          mimeType: blob.type || 'image/jpeg',
+          originalName: file.name || 'foto.jpg',
+          caption: '',
+          createdAt: nowIso(),
+          updatedAt: nowIso()
+        });
+      }
+      toast(files.length === 1 ? 'Foto salvata.' : 'Foto salvate.');
+      navigate({ name: 'session', sessionId });
+    }
+
+    function compressImage(file, maxDimension = 2200, quality = 0.84) {
+      return new Promise(resolve => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const largest = Math.max(img.width, img.height);
+          const scale = largest > maxDimension ? maxDimension / largest : 1;
+          const width = Math.round(img.width * scale);
+          const height = Math.round(img.height * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          canvas.toBlob(blob => { URL.revokeObjectURL(url); resolve(blob || file); }, 'image/jpeg', quality);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+      });
+    }
+
+    async function showPhoto(photoId) {
+      const photo = await getById('photos', photoId);
+      if (!photo) return;
+      const url = URL.createObjectURL(photo.blob);
+      state.activePhotoUrl = url;
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-actions"><button class="btn secondary" onclick="closeModal()">Chiudi</button></div>
+        <img src="${url}" alt="Foto clinica ingrandita" />
+      `;
+      modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+      document.body.appendChild(modal);
+    }
+
+    function closeModal() {
+      document.querySelector('.modal')?.remove();
+      if (state.activePhotoUrl) URL.revokeObjectURL(state.activePhotoUrl);
+      state.activePhotoUrl = null;
+    }
+
+    async function updatePhotoCaption(photoId, caption) {
+      const photo = await getById('photos', photoId);
+      if (!photo) return;
+      photo.caption = String(caption || '').trim();
+      photo.updatedAt = nowIso();
+      await put('photos', photo);
+      toast('Didascalia salvata.');
+    }
+
+    async function deletePhoto(photoId) {
+      const photo = await getById('photos', photoId);
+      if (!photo) return;
+      if (!confirmDelete('Eliminare questa foto?')) return;
+      await remove('photos', photoId);
+      toast('Foto eliminata.');
+      navigate({ name: 'session', sessionId: photo.sessionId });
+    }
+
+    async function deleteSession(sessionId, patientId) {
+      if (!confirmDelete('Eliminare questa seduta e tutte le foto collegate?')) return;
+      const photos = await getAllByIndex('photos', 'sessionId', sessionId);
+      for (const photo of photos) await remove('photos', photo.id);
+      await remove('sessions', sessionId);
+      toast('Seduta eliminata.');
+      navigate({ name: 'patient', patientId });
+    }
+
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    function dataUrlToBlob(dataUrl) {
+      const [meta, content] = dataUrl.split(',');
+      const mimeMatch = /data:(.*?);base64/.exec(meta);
+      const mimeType = mimeMatch?.[1] || 'image/jpeg';
+      const binary = atob(content);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new Blob([bytes], { type: mimeType });
+    }
+
+    async function makeBackupPayload() {
+      await refreshData();
+      const photos = [];
+      for (const photo of state.photos) {
+        photos.push({ ...photo, blob: undefined, dataUrl: await blobToDataUrl(photo.blob) });
+      }
+      return {
+        app: 'Dental CaseBook Privato',
+        version: 2,
+        exportedAt: nowIso(),
+        patients: state.patients,
+        sessions: state.sessions,
+        photos
+      };
+    }
+
+    async function encryptJson(payload, password) {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(password, salt, ['encrypt']);
+      const plaintext = new TextEncoder().encode(JSON.stringify(payload));
+      const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext);
+      return {
+        app: 'Dental CaseBook Encrypted Backup',
+        version: 1,
+        algorithm: 'AES-GCM/PBKDF2-SHA256',
+        iterations: 250000,
+        salt: bytesToBase64(salt),
+        iv: bytesToBase64(iv),
+        data: bytesToBase64(new Uint8Array(ciphertext))
+      };
+    }
+
+    async function decryptJson(encrypted, password) {
+      const salt = base64ToBytes(encrypted.salt);
+      const iv = base64ToBytes(encrypted.iv);
+      const key = await deriveKey(password, salt, ['decrypt']);
+      const ciphertext = base64ToBytes(encrypted.data);
+      const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+      return JSON.parse(new TextDecoder().decode(plaintext));
+    }
+
+    async function exportEncryptedBackup() {
+      const password = prompt('Password per cifrare il backup. Conservala: senza password non potrai reimportarlo.');
+      if (!password || password.length < 8) return toast('Usa una password di almeno 8 caratteri.');
+      toast('Preparazione backup cifrato...');
+      const payload = await makeBackupPayload();
+      const encrypted = await encryptJson(payload, password);
+      const file = new Blob([JSON.stringify(encrypted, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `dental-casebook-cifrato-${new Date().toISOString().slice(0,10)}.dentalbackup.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast('Backup cifrato esportato.');
+    }
+
+    async function renderSettings() {
+      renderTopbar('Sicurezza', 'PIN, backup cifrati e uso locale');
+      app.innerHTML = `
+        <section class="card stack">
+          <h2>Protezione locale</h2>
+          <div class="notice">
+            Questa web app non invia dati a server esterni. Dati, note e foto sono salvati nell’archivio locale del browser su questo dispositivo.
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" onclick="changePin()">Cambia PIN</button>
+            <button class="btn ghost" onclick="lock()">Blocca ora</button>
+          </div>
+        </section>
+
+        <section class="card stack">
+          <h2>Backup</h2>
+          <div class="notice warning">
+            Fai backup regolari. Il backup è cifrato con una password scelta da te: non salvarlo in posti accessibili ad altri.
+          </div>
+          <div class="button-row">
+            <button class="btn" onclick="exportEncryptedBackup()">Esporta backup cifrato</button>
+            <button class="btn secondary" onclick="document.getElementById('backupImport').click()">Importa backup cifrato</button>
+          </div>
+        </section>
+
+        <section class="card danger-zone stack">
+          <h2>Reset locale</h2>
+          <p class="subtitle">Cancella tutti i dati presenti su questo browser. Usa solo dopo aver esportato un backup.</p>
+          <button class="btn danger" onclick="wipeAllData()">Cancella tutto</button>
+        </section>
+      `;
+    }
+
+    async function changePin() {
+      const oldPin = prompt('Inserisci PIN attuale');
+      if (!oldPin) return;
+      const salt = localStorage.getItem(PIN_SALT_KEY);
+      const expected = localStorage.getItem(PIN_HASH_KEY);
+      if (await hashPin(oldPin, salt) !== expected) return toast('PIN attuale errato.');
+      const newPin = prompt('Nuovo PIN, minimo 4 cifre');
+      if (!newPin || newPin.length < 4) return toast('PIN troppo corto.');
+      const newSaltBytes = crypto.getRandomValues(new Uint8Array(16));
+      const newSalt = bytesToBase64(newSaltBytes);
+      const newHash = await hashPin(newPin, newSalt);
+      localStorage.setItem(PIN_SALT_KEY, newSalt);
+      localStorage.setItem(PIN_HASH_KEY, newHash);
+      toast('PIN aggiornato.');
+    }
+
+    async function wipeAllData() {
+      if (!confirmDelete('Cancellare definitivamente tutti i dati locali?')) return;
+      if (!confirmDelete('Conferma finale: questa azione elimina pazienti, sedute e foto da questo browser.')) return;
+      const dbName = DB_NAME;
+      state.db?.close();
+      await new Promise((resolve, reject) => {
+        const req = indexedDB.deleteDatabase(dbName);
+        req.onsuccess = resolve;
+        req.onerror = () => reject(req.error);
+        req.onblocked = resolve;
+      });
+      state.db = await openDatabase();
+      await refreshData();
+      toast('Archivio locale cancellato.');
+      navigate({ name: 'dashboard' });
+    }
+
+    $('#backupImport').addEventListener('change', async event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const encrypted = JSON.parse(await file.text());
+        if (!encrypted.data || !encrypted.salt || !encrypted.iv) return toast('File backup non valido o non cifrato.');
+        const password = prompt('Password del backup cifrato');
+        if (!password) return;
+        const backup = await decryptJson(encrypted, password);
+        if (!backup.patients || !backup.sessions || !backup.photos) return toast('Contenuto backup non valido.');
+        if (!confirmDelete('Importare questo backup? I dati con lo stesso ID verranno sovrascritti.')) return;
+        for (const patient of backup.patients) await put('patients', patient);
+        for (const session of backup.sessions) await put('sessions', session);
+        for (const photo of backup.photos) {
+          const imported = { ...photo, blob: dataUrlToBlob(photo.dataUrl) };
+          delete imported.dataUrl;
+          await put('photos', imported);
+        }
+        toast('Backup importato.');
+        navigate({ name: 'dashboard' });
+      } catch (error) {
+        console.error(error);
+        toast('Importazione fallita: password errata o file non valido.');
+      } finally {
+        event.target.value = '';
+      }
+    });
+
+    async function init() {
+      if (!window.crypto?.subtle || !window.indexedDB) {
+        lockRoot.innerHTML = `<section class="card lock-card stack"><h1>Browser non supportato</h1><div class="notice warning">Serve Safari aggiornato su iPhone o un browser moderno con IndexedDB e Web Crypto.</div></section>`;
+        return;
+      }
+      renderLockScreen();
+    }
+
+    init();
+  </script>
+</body>
+</html>
